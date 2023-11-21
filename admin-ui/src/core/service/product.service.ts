@@ -58,6 +58,27 @@ export class ProductService {
         }
     }
 
+    async addMultiImage(id: number, files: File[]) {
+        const formData = new FormData();
+        console.log(files)
+        for (let i = 0; i < files.length; i++) {
+            formData.append('files', files[i]);
+        }
+        const response = await axios.post(this.url + "addMultiImage?id=" + id, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+        try {
+            if (response.data !== null) {
+                return response.data;
+            }
+        } catch (e) {
+            toast.error("Thêm ảnh thất bại");
+        }
+    }
+
+
     async delete(id: number) {
         if (confirm("Bạn có muốn xóa sản phẩm không ?")) {
             const response = await axios.delete(this.url + "delete/" + id);
