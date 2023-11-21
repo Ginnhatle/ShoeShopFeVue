@@ -28,6 +28,13 @@
 					</div>
 				</div>
 				<div class="form-group row mb-3 align-items-start d-flex justify-content-center">
+					<label for="imageThumbleLink" class="col-sm-2 control-label fw-bold align-self-center text-start">Chọn
+						ảnh liên quan</label>
+					<div class="col-sm-5">
+						<input type="file" id="imageThumbleLink" class="form-control-sm form-control"  multiple="true" />
+					</div>
+				</div>
+				<div class="form-group row mb-3 align-items-start d-flex justify-content-center">
 					<label for="discount" class="col-sm-2 control-label fw-bold align-self-center text-start">% giảm giá
 						(*)</label>
 					<div class="col-sm-5">
@@ -203,8 +210,12 @@ export default defineComponent({
 				});
 				this.productDto.attributeValues = this.attributeValues;
 				this.productService.save(this.productDto).then((res) => {
+					let productId = res.product.id;
 					let file = $event.target[2].files[0];
-					this.productService.addImage(res.product.id, file).then((res) => {
+					this.productService.addImage(productId, file).then((res) => {
+					});
+					let files = $event.target[3].files;
+					this.productService.addMultiImage(productId, files).then((res) => {
 					});
 				});
 			}else{

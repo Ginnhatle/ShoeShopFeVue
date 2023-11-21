@@ -49,13 +49,13 @@
 								<h5 class="mb-4">Hình thức thanh toán</h5>
 
 								<div class="d-flex justify-content-start">
-<!--									<div class="form-check">-->
-<!--										<input class="form-check-input" type="radio" name="flexRadioDefault"-->
-<!--										       @change.prevent="isShowQRCode = true " id="checkoutForm3" :value="PaymentMethod.BANK_TRANSFER" v-model="orderRequest.paymentMethod"/>-->
-<!--										<label class="form-check-label" for="checkoutForm3">-->
-<!--											Chuyển khoản-->
-<!--										</label>-->
-<!--									</div>-->
+									<div class="form-check">
+										<input class="form-check-input" type="radio" name="flexRadioDefault"
+										       @change.prevent="isShowQRCode = true " id="checkoutForm3" :value="PaymentMethod.BANK_TRANSFER" v-model="orderRequest.paymentMethod"/>
+										<label class="form-check-label" for="checkoutForm3">
+											Chuyển khoản
+										</label>
+									</div>
 									<div class="form-check">
 										<input class="form-check-input" type="radio" name="flexRadioDefault" v-model="orderRequest.paymentMethod"
 										       @change.prevent="isShowQRCode = false " id="checkoutForm4" :value="PaymentMethod.COD"/>
