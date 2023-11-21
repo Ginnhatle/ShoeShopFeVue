@@ -58,4 +58,5 @@ export class ProductSearchRequest {
 
 export class ProductResponse extends Product {
     productDetailList?: ProductDetail[];
+    imageList?: string[];
 }
