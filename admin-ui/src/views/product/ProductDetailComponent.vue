@@ -68,26 +68,24 @@
 						</select>
 					</div>
 				</div>
-				<template v-if="attributeList && attributeList?.length > 0 && !isUpdate">
+				<template v-if="attributeList && attributeList?.length > 0">
 					<div class="form-group row mb-3 align-items-start d-flex justify-content-center"
 					     v-for="(item,index) in attributeList">
 						<label :for="item.name"
-						       class="col-sm-2 control-label fw-bold align-self-center text-start">{{
-								item.name
-							}}</label>
+						       class="col-sm-2 control-label fw-bold align-self-center text-start">{{item.name }}</label>
 						<div class="col-sm-5">
 							<input v-if="item.type === ATTRIBUTE_TYPE.STRING || item.type === ATTRIBUTE_TYPE.DOUBLE"
 							       type="text" :id="item.name" class="form-control"
-							       v-model="attributeValues[item.name]"/>
+							       v-model="attributeValuesData[item.name]"/>
 							<input v-if="item.type === ATTRIBUTE_TYPE.DATE" type="date" :id="item.name"
-							       class="form-control" v-model="attributeValues[item.name]"/>
+							       class="form-control" v-model="attributeValuesData[item.name]"/>
 							<input v-if="item.type === ATTRIBUTE_TYPE.DATETIME" type="datetime-local" :id="item.name"
-							       class="form-control" v-model="attributeValues[item.name]"/>
+							       class="form-control" v-model="attributeValuesData[item.name]"/>
 							<input v-if="item.type === ATTRIBUTE_TYPE.INTEGER" type="number" :id="item.name"
-							       class="form-control" v-model="attributeValues[item.name]"/>
+							       class="form-control" v-model="attributeValuesData[item.name]"/>
 							<template v-if="item.type === ATTRIBUTE_TYPE.BOOLEAN">
 								<select :id="item.name" class="form-select-sm form-control"
-								        v-model="attributeValues[item.name]">
+								        v-model="attributeValuesData[item.name]">
 									<option value="true">Có</option>
 									<option value="false">Không</option>
 								</select>
@@ -104,7 +102,7 @@
 						</select>
 					</div>
 				</div>
-				<div class="form-group row mb-3 align-items-start d-flex justify-content-center" v-if="!isUpdate">
+				<div class="form-group row mb-3 align-items-start d-flex justify-content-center">
 					<label class="col-sm-3 control-label fw-bold align-self-center text-center mb-1">Kích cỡ
 						(*)</label>
 					<div class="col-sm-6 form-check form-check-inline">
@@ -192,7 +190,8 @@ export default defineComponent({
 			id: 0 as number,
 			isUpdate: false as boolean,
 			attributeValue: new Map<string, string>(),
-			ATTRIBUTE_TYPE: ATTRIBUTE_TYPE
+			ATTRIBUTE_TYPE: ATTRIBUTE_TYPE,
+			attributeValuesData: {} as any,
 		}
 	},
 	methods: {
@@ -208,7 +207,7 @@ export default defineComponent({
 					sizeDto.quantity = this.quantityList[index];
 					this.productDto.sizeList?.push(sizeDto);
 				});
-				this.productDto.attributeValues = this.attributeValues;
+				this.productDto.attributeValues = this.attributeValuesData;
 				this.productService.save(this.productDto).then((res) => {
 					let productId = res.product.id;
 					let file = $event.target[2].files[0];
@@ -219,7 +218,15 @@ export default defineComponent({
 					});
 				});
 			}else{
-				this.productService.update(this.id,this.productDto).then((res) => {
+				this.sizeListSelected.length = this.quantityList.length;
+				this.sizeListSelected.forEach((item, index) => {
+					let sizeDto = new SizeDto();
+					sizeDto.size = item;
+					sizeDto.quantity = this.quantityList[index];
+					this.productDto.sizeList?.push(sizeDto);
+				});
+				this.productDto.attributeValues = this.attributeValuesData;
+				this.productService.updateDetail(this.id,this.productDto).then((res) => {
 				});
 			}
 		},
@@ -244,6 +251,13 @@ export default defineComponent({
 		changeCategoryCombo() {
 			this.attributeService.findAllByCategoryId(this.productDto.categoryId || 0).then((res) => {
 				this.attributeList = res;
+				if(this.attributeList && this.attributeList.length > 0 && this.attributeValuesData){
+					this.attributeList.forEach((item) => {
+						if( item.name && !this.attributeValuesData[item.name]){
+							this.attributeValuesData[item.name] = this.productDto.attributeValues[item.name] || '';
+						}
+					})
+				}
 			});
 		},
 		removeSize(index: number) {
@@ -258,12 +272,12 @@ export default defineComponent({
 		this.id = Number(this.$route.params.id);
 		if (this.id !== 0 && !isNaN(this.id)) {
 			this.isUpdate = true;
-			this.productService.findById(this.id).then((res) => {
+			this.productService.getDetail(this.id).then((res) => {
 				this.productDto = res;
-				this.productDto.categoryId = res.category.id;
-				this.productDto.brandId = res.brand.id;
+				this.changeCategoryCombo();
 			});
 		}
+
 		const sizeDto = new SizeDto();
 		sizeDto.size = '37';
 		sizeDto.quantity = 0;
@@ -271,18 +285,7 @@ export default defineComponent({
 		this.getCategoryList();
 		this.getPublisherList();
 		this.getSizeList();
-	},
-	computed: {
-		attributeValues() {
-			let values: { [key: string]: string } = {}; // sử dụng chỉ mục
-			this.attributeList.forEach((item) => {
-				if (item.name) {
-					values[item.name] = this.attributeValue.get(item.name) || '';
-				}
-			});
-			return values;
-		},
-	},
+	}
 })
 
 </script>
