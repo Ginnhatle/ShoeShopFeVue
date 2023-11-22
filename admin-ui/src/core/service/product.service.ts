@@ -15,6 +15,11 @@ export class ProductService {
         return response.data;
     }
 
+    async  getDetail(id: number) {
+        const response = await axios.get(this.url + "getDetail/"+ id);
+        return response.data;
+    }
+
     async save(productDto: ProductDto) {
         const response = await axios.post(this.url + "addDetail", productDto);
         try {
@@ -41,6 +46,17 @@ export class ProductService {
         }
     }
 
+    async updateDetail(id: number, product: ProductDto) {
+        const response = await axios.put(this.url + "updateDetail/" + id, product);
+        try {
+            if (response.data !== null) {
+                toast.success("Cập nhật sản phẩm thành công");
+                return response.data;
+            }
+        } catch (e) {
+            toast.error("Cập nhật sản phẩm thất bại");
+        }
+    }
     async addImage(id: number, file: File) {
         const formData = new FormData();
         formData.append('file', file);
