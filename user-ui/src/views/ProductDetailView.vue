@@ -5,12 +5,12 @@
 				<div class="col-md-6 border-end">
 					<div class="d-flex flex-column justify-content-center">
 						<div class="main_image">
-							<img :src="'http://localhost/image/product/' + productImageThumbnail"
+							<img :src="'http://localhost/image/' + productImageThumbnail"
 							     width="450">
 						</div>
 						<div class="small_images mt-3">
 							<!-- Duyệt qua danh sách ảnh nhỏ và hiển thị chúng -->
-							<img :src="'http://localhost/image/product/' + image" width="80" v-for="image in product?.imageList" :key="image" @click.prevent="changeImage(image)">
+							<img role="button" :src="'http://localhost/image/' + image" width="80" v-for="image in product?.imageList" :key="image" @click.prevent="changeImage(image)">
 						</div>
 					</div>
 				</div>
@@ -51,10 +51,10 @@
 						<div v-if="product?.productDetailList?.length > 0" class="text-start">
 							<span class="fw-bold">Kích cỡ</span>
 							<div class="d-flex flex-row ">
-								<button :class="{'bg-success text-light' : size == item.size.size}" type="button"
+								<button :class="{'bg-success text-light' : size == item?.size?.size}" type="button"
 								        class="m-1"
 								        v-for="item in product?.productDetailList"
-								        @click.prevent="size = item.size.size;getQuantity()">
+								        @click.prevent="size += item?.size?.size | '' ;getQuantity()">
 									{{ item?.size?.size }}
 								</button>
 							</div>
@@ -62,9 +62,9 @@
 						<div v-if="product?.productDetailList?.length" class="text-start">
 							<span class="fw-bold">Màu sắc</span>
 							<div class="d-flex flex-row ">
-								<button :class="{'bg-success text-light' : color == item.color.name}" class="m-1"
+								<button :class="{'bg-success text-light' : color == item?.color?.name}" class="m-1"
 								        v-for="item in product?.productDetailList"
-								        @click.prevent="color = item.color.name;getQuantity()">
+								        @click.prevent="color += item.color?.name;getQuantity()">
 									{{ item?.color?.name }}
 								</button>
 							</div>

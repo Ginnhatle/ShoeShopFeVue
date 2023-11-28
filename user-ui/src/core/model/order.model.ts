@@ -10,6 +10,7 @@ export class Order {
     public static EXCHANGED = 5;  // đổi hàng
     public static RECEIVED = 6;   // đã nhận hàng
     public static DELIVERING = 7; // đang giao hàng
+    public static AT_STORE = 8 // Tại quầy
     id?: number;
     code?: string;
     address?: string;
@@ -43,6 +44,8 @@ export class Order {
                 return 'Đã nhận hàng';
             case Order.DELIVERING:
                 return 'Đang giao hàng';
+            case Order.AT_STORE:
+                return 'Thanh toán tại quầy';
             default:
                 return '';
         }
@@ -64,4 +67,6 @@ export class PaymentMethod {
     public static COD = "Tiền mặt";
     // chuyển khoản ngân hàng
     public static BANK_TRANSFER = "Thẻ ATM/Internet Banking";
+
+    public static AT_STORE = "Tại quầy"
 }

@@ -48,19 +48,26 @@
 
 								<h5 class="mb-4">Hình thức thanh toán</h5>
 
-								<div class="d-flex justify-content-start">
-									<div class="form-check">
+								<div class="d-flex">
+									<div class="form-check m-2">
 										<input class="form-check-input" type="radio" name="flexRadioDefault"
 										       @change.prevent="isShowQRCode = true " id="checkoutForm3" :value="PaymentMethod.BANK_TRANSFER" v-model="orderRequest.paymentMethod"/>
 										<label class="form-check-label" for="checkoutForm3">
 											Chuyển khoản
 										</label>
 									</div>
-									<div class="form-check">
+									<div class="form-check m-2">
 										<input class="form-check-input" type="radio" name="flexRadioDefault" v-model="orderRequest.paymentMethod"
 										       @change.prevent="isShowQRCode = false " id="checkoutForm4" :value="PaymentMethod.COD"/>
 										<label class="form-check-label" for="checkoutForm4">
 											Tiền mặt
+										</label>
+									</div>
+									<div class="form-check m-2" v-if="User.role === 'ROLE_ADMIN'">
+										<input class="form-check-input" type="radio" name="flexRadioDefault" v-model="orderRequest.paymentMethod"
+										       @change.prevent="isShowQRCode = false " id="checkoutForm5" :value="PaymentMethod.AT_STORE"/>
+										<label class="form-check-label" for="checkoutForm5">
+											Tại quầy
 										</label>
 									</div>
 								</div>
@@ -115,6 +122,7 @@ import {Order, OrderRequest} from "@/core/model/order.model";
 import {OrderService} from "@/core/service/order.service";
 import {PaymentMethod} from "@/core/model/order.model";
 import axios from "axios";
+import {User} from "@/core/model/user.model";
 export default defineComponent({
 	name: 'Checkout',
 	data() {
@@ -127,7 +135,8 @@ export default defineComponent({
 			price : 0,
 			feeShip : 0,
 			qrCode : '',
-			isShowQRCode : false
+			isShowQRCode : false,
+			User : new User()
 		}
 	},
 	methods: {
@@ -137,9 +146,15 @@ export default defineComponent({
 			this.orderRequest.cartIdList = ids;
 			this.orderRequest.voucherId = this.voucherId;
 			this.orderRequest.userId = Number(localStorage.getItem('userId'));
-			this.orderService.doOrder(this.orderRequest).then((res) => {
-				this.$router.push("/order");
-			});
+			if (this.orderRequest && this.orderRequest.paymentMethod !== PaymentMethod.AT_STORE) {
+				this.orderService.doOrder(this.orderRequest).then((res) => {
+					this.$router.push("/order");
+				});
+			} else {
+				this.orderService.paymentAtStore(this.orderRequest).then((res) => {
+					this.$router.push("/order");
+				});
+			}
 		},
 		async getPrice() {
 			try {
@@ -195,12 +210,14 @@ export default defineComponent({
 					}
 				}
 			});
-		}
+		},
+
 	},
 	created() {
 		this.getPrice();
 		this.makeQRCode();
 		this.loadData();
+		this.User = JSON.parse(localStorage.getItem('user') as string);
 	}
 })
 </script>
