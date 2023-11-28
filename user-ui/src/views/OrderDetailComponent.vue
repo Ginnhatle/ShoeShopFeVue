@@ -34,7 +34,7 @@
 							{{Product.getGender( item?.productDetail?.product?.gender )}}
 						</td>
 						<td>
-							{{ item?.price }}
+							{{ Number(item?.price * item?.quantity)}}
 						</td>
 					</tr>
 					</tbody>

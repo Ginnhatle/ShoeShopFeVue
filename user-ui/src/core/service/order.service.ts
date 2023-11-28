@@ -67,4 +67,10 @@ export class OrderService {
         return response.data;
     }
 
+    async paymentAtStore(model : any) {
+        const response = await axios.post(this.url + "paymentAtStore",model);
+        return response.data;
+    }
+
+
 }

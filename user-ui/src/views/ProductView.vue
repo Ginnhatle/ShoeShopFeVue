@@ -91,7 +91,7 @@
 					<div class="col-md-4" v-for="item in productList.content">
 						<div class="product py-4"><span class="off bg-success" v-if="item?.discount">{{ item.discount }} % OFF</span>
 							<div class="text-center"><img class="image"
-							                              :src="'http://localhost/image/product/'+item.imageThumbnail">
+							                              :src="'http://localhost/image/'+item.imageThumbnail">
 							</div>
 							<div :title="item.name" class="about" role="button"><h5>
 								{{ !item.viewMore && item.name.length > 50 ? item.name.substring(0, 50) + "... " : item.name }}<small
